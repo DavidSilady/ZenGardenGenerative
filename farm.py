@@ -4,7 +4,7 @@ import tkinter as tk
 
 class Gallery:
 	def __init__(self, filenames=None):
-		filenames = ["rock", "monk"]
+		filenames = ["rock", "monk", "other_monk"]
 		self.image_tuples = []
 		for filename in filenames:
 			self.image_tuples.append((filename + "75", tk.PhotoImage(file=(filename + "75" + ".png"))))
@@ -81,7 +81,7 @@ class Display:
 				self.tiles[y][x] = tile
 
 	def draw_monk(self):
-		img = self.gallery.get_img("monk75")
+		img = self.gallery.get_img("other_monk" + str(self.tile_size))
 		self.canvas.create_image(self.tile_size / 2 + self.tile_size, self.tile_size / 2, image=img)
 
 
@@ -110,5 +110,5 @@ class Tile:
 
 		self.text = canvas.create_text(center_x, center_y, text=str(self.value), fill="white", font=str(tile_size * 2))
 		if self.value == -1:
-			img = gallery.get_img("rock75")
+			img = gallery.get_img("rock" + str(tile_size))
 			self.picture = canvas.create_image(center_x, center_y, image=img)
