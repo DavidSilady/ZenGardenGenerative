@@ -1,23 +1,15 @@
 from farm import Farm
 
 
-class MonkDisplay:
-	def __init__(self, canvas, gallery, tile_size):
-		self.canvas = canvas
-		self.x = -1
-		self.y = -1
-
-	def draw(self, gallery, tile_size):
-		img = gallery.get_img("other_monk" + str(tile_size))
-		self.canvas.create_image(tile_size / 2, tile_size / 2, image=img)
-
-
 class Monk:
-	def __init__(self, farm: Farm, monk_display=None):
-		self.monk_display = monk_display
+	def __init__(self, farm: Farm, display=None):
+		self.display = display
 		self.farm = farm
 		self.x = 0
 		self.y = 0
+
+	def step_on_tile(self, x, y):
+		self.farm.field[y][x] = 1
 
 	def clear_way(self, new_x, new_y):
 		"""
@@ -25,9 +17,9 @@ class Monk:
 		"""
 		return self.farm.field[new_y][new_x] == -1
 
-	def move_observer(self, x_offset, y_offset):
-		for monk in self.monk_display:
-			monk.move(x_offset, y_offset)
+	def display_move(self, x_offset, y_offset):
+		for root in self.display:
+			root.monk.move(x_offset, y_offset)
 
 	def move_up(self):
 		new_x = self.x
@@ -37,6 +29,7 @@ class Monk:
 		if self.clear_way(new_x, new_y):
 			return
 		self.y = new_y
+		self.display_move(0, -1)
 
 	def move_down(self):
 		new_x = self.x
@@ -46,6 +39,7 @@ class Monk:
 		if self.clear_way(new_x, new_y):
 			return
 		self.y = new_y
+		self.display_move(0, 1)
 
 	def move_right(self):
 		new_x = self.x + 1
@@ -55,6 +49,7 @@ class Monk:
 		if self.clear_way(new_x, new_y):
 			return
 		self.x = new_x
+		self.display_move(1, 0)
 
 	def move_left(self):
 		new_x = self.x - 1
@@ -64,6 +59,7 @@ class Monk:
 		if self.clear_way(new_x, new_y):
 			return
 		self.x = new_x
+		self.display_move(-1, 0)
 
 
 

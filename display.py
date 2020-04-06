@@ -1,5 +1,26 @@
+import time
 from farm import Farm
 import tkinter as tk
+
+
+class MonkDisplay:
+	def __init__(self, canvas, gallery, tile_size):
+		self.canvas = canvas
+		self.tile_size = tile_size
+		self.x = -1
+		self.y = -1
+		self.image = self.draw(gallery)
+
+	def draw(self, gallery):
+		img = gallery.get_img("other_monk" + str(self.tile_size))
+		return self.canvas.create_image(self.tile_size / 2, self.tile_size / 2, image=img)
+
+	def move(self, x_offset, y_offset, speed=200):
+		speed = 0.05 / speed
+		for offset in range(0, self.tile_size):
+			time.sleep(speed)
+			self.canvas.move(self.image, x_offset, y_offset)
+			self.canvas.update()
 
 
 class Gallery:
@@ -33,6 +54,7 @@ class Display:
 		self.tiles = None
 		self.gallery = Gallery()
 		self.draw_farm(farm)
+		self.monk = MonkDisplay(self.canvas, self.gallery, self.tile_size)
 
 	def run(self):
 		self.root.mainloop()
