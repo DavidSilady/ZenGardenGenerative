@@ -51,20 +51,20 @@ class Display:
 		self.canvas = tk.Canvas(self.root, width=width, height=height, bd=0, highlightthickness=0, relief='ridge')
 		self.canvas.pack(side="top")
 		self.canvas.configure(background="#cb9ca1")
-		self.tiles = None
 		self.gallery = Gallery()
-		self.draw_farm(farm)
+		self.tiles = self.draw_farm(farm)
 		self.monk = MonkDisplay(self.canvas, self.gallery, self.tile_size)
 
 	def run(self):
 		self.root.mainloop()
 
 	def draw_farm(self, farm: Farm):
-		self.tiles = [[Tile(0, 0, -1, -1) for x in range(farm.width)] for y in range(farm.height)]
+		tiles = [[Tile(0, 0, -1, -1) for x in range(farm.width)] for y in range(farm.height)]
 		for y in range(farm.height):
 			for x in range(farm.width):
 				tile = Tile(farm.field[y][x], self.tile_size, x + 1, y + 1, self.canvas, self.gallery)
-				self.tiles[y][x] = tile
+				tiles[y][x] = tile
+		return tiles
 
 
 class Tile:
@@ -75,11 +75,16 @@ class Tile:
 		self.value = value
 		self.x = x
 		self.y = y
+		self.canvas = canvas
 		self.text = None
 		self.picture = None
 		self.background = None
 		if canvas is not None:
 			self.draw(canvas, tile_size, gallery)
+
+	def update_color(self):
+		self.color = "#cb9ca1"
+		self.canvas.itemconfig(self.background, fill=self.color)
 
 	def draw(self, canvas, tile_size, gallery: Gallery):
 		canvas_x = int(self.x * tile_size)

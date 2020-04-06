@@ -10,6 +10,7 @@ class Monk:
 
 	def step_on_tile(self, x, y):
 		self.farm.field[y][x] = 1
+		self.display.tiles[y][x]
 
 	def clear_way(self, new_x, new_y):
 		"""
