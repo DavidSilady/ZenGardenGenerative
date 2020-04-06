@@ -27,7 +27,8 @@ class MonkDisplay:
 
 class Gallery:
 	def __init__(self, filenames=None):
-		filenames = ["rock", "monk", "other_monk", "dirt"]
+		if filenames is None:
+			filenames = ["rock", "monk", "other_monk", "dirt"]
 		self.image_tuples = []
 		for filename in filenames:
 			try:
