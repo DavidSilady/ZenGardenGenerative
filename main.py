@@ -1,5 +1,6 @@
 from display import Display
 from farm import Farm
+from monk import Monk
 
 
 def read_map(filename):
@@ -18,7 +19,9 @@ if __name__ == '__main__':
     field, width, height = read_map("field_maps")
     farm = Farm(width, height, field=field)
     farm.print_field()
-    display = Display(farm, 75)
+    monk = Monk(farm)
+
+    display = Display(farm, 75, monk)
     display.run()
 
 

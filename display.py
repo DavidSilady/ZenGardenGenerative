@@ -2,20 +2,40 @@ import time
 from farm import Farm
 import tkinter as tk
 
+from monk import Monk
+
 
 class MonkDisplay:
-	def __init__(self, canvas, gallery, tile_size):
+	def __init__(self, canvas, root, gallery, tile_size, monk: Monk):
+		self.monk = monk
 		self.canvas = canvas
 		self.tile_size = tile_size
 		self.x = -1
 		self.y = -1
 		self.image = self.draw(gallery)
+		root.bind("<Key>", self.on_keypress)
 
 	def draw(self, gallery):
 		img = gallery.get_img("other_monk" + str(self.tile_size))
 		return self.canvas.create_image(self.tile_size / 2, self.tile_size / 2, image=img)
 
+	def on_keypress(self, event):
+		x = 0
+		y = 0
+		print(event.char)
+		if event.char == "w":
+			x, y = self.monk.move_up()
+		if event.char == "a":
+			x, y = self.monk.move_left()
+		if event.char == "s":
+			x, y = self.monk.move_down()
+		if event.char == "d":
+			x, y = self.monk.move_right()
+		self.move(x, y)
+
 	def move(self, x_offset, y_offset, speed=200):
+		self.x += x_offset
+		self.y += y_offset
 		speed = 0.05 / speed
 		for offset in range(0, self.tile_size):
 			time.sleep(speed)
@@ -41,7 +61,7 @@ class Gallery:
 
 
 class Display:
-	def __init__(self, farm: Farm, tile_size):
+	def __init__(self, farm: Farm, tile_size, monk):
 		self.tile_size = tile_size
 		width = (farm.width + 2) * tile_size
 		height = (farm.height + 2) * tile_size
@@ -53,7 +73,7 @@ class Display:
 		self.canvas.configure(background="#cb9ca1")
 		self.gallery = Gallery()
 		self.tiles = self.draw_farm(farm)
-		self.monk = MonkDisplay(self.canvas, self.gallery, self.tile_size)
+		self.monk = MonkDisplay(self.canvas, self.root, self.gallery, self.tile_size, monk)
 
 	def run(self):
 		self.root.mainloop()
