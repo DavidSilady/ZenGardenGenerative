@@ -8,9 +8,16 @@ class Monk:
 		self.y = -1
 
 	def step_on_tile(self, x, y):
-		self.farm.field[y][x] = 1
+		if self.is_in_field():
+			self.farm.field[y][x] = 1
 
-	def clear_way(self, new_x, new_y):
+	def is_in_field(self):
+		if 0 <= self.x < self.farm.width:
+			if 0 <= self.y < self.farm.height:
+				return True
+		return False
+
+	def is_clear_way(self, new_x, new_y):
 		"""
 		:return: bool if the step is clear (doesn't contain an obstacle)
 		"""
@@ -32,9 +39,10 @@ class Monk:
 				return 0, 0
 			self.y = new_y
 			return 0, -1
-		if not self.clear_way(new_x, new_y):
+		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.y = new_y
+		self.step_on_tile(new_x, new_y)
 		return 0, -1
 
 	def move_down(self):
@@ -46,9 +54,10 @@ class Monk:
 				return 0, 0
 			self.y = new_y
 			return 0, 1
-		if not self.clear_way(new_x, new_y):
+		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.y = new_y
+		self.step_on_tile(new_x, new_y)
 		return 0, 1
 
 	def move_right(self):
@@ -60,9 +69,10 @@ class Monk:
 				return 0, 0
 			self.x = new_x
 			return 1, 0
-		if not self.clear_way(new_x, new_y):
+		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.x = new_x
+		self.step_on_tile(new_x, new_y)
 		return 1, 0
 
 	def move_left(self):
@@ -74,9 +84,10 @@ class Monk:
 				return 0, 0
 			self.x = new_x
 			return -1, 0
-		if not self.clear_way(new_x, new_y):
+		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.x = new_x
+		self.step_on_tile(new_x, new_y)
 		return -1, 0
 
 

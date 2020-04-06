@@ -6,36 +6,18 @@ from monk import Monk
 
 
 class MonkDisplay:
-	def __init__(self, canvas, root, gallery, tile_size, monk: Monk):
-		self.monk = monk
+	def __init__(self, canvas, root, gallery, tile_size, logic_monk: Monk):
+		self.logic_monk = logic_monk
 		self.canvas = canvas
 		self.tile_size = tile_size
-		self.x = -1
-		self.y = -1
 		self.image = self.draw(gallery)
-		root.bind("<Key>", self.on_keypress)
 
 	def draw(self, gallery):
 		img = gallery.get_img("other_monk" + str(self.tile_size))
 		return self.canvas.create_image(self.tile_size / 2, self.tile_size / 2, image=img)
 
-	def on_keypress(self, event):
-		x = 0
-		y = 0
-		print(event.char)
-		if event.char == "w":
-			x, y = self.monk.move_up()
-		if event.char == "a":
-			x, y = self.monk.move_left()
-		if event.char == "s":
-			x, y = self.monk.move_down()
-		if event.char == "d":
-			x, y = self.monk.move_right()
-		self.move(x, y)
-
 	def move(self, x_offset, y_offset, speed=200):
-		self.x += x_offset
-		self.y += y_offset
+		print(self.logic_monk.x, self.logic_monk.y)
 		speed = 0.05 / speed
 		for offset in range(0, self.tile_size):
 			time.sleep(speed)
@@ -73,7 +55,24 @@ class Display:
 		self.canvas.configure(background="#cb9ca1")
 		self.gallery = Gallery()
 		self.tiles = self.draw_farm(farm)
-		self.monk = MonkDisplay(self.canvas, self.root, self.gallery, self.tile_size, monk)
+		self.display_monk = MonkDisplay(self.canvas, self.root, self.gallery, self.tile_size, monk)
+		self.root.bind("<Key>", self.on_keypress)
+
+	def on_keypress(self, event):
+		x = 0
+		y = 0
+		print(event.char)
+		if event.char == "w":
+			x, y = self.display_monk.logic_monk.move_up()
+		if event.char == "a":
+			x, y = self.display_monk.logic_monk.move_left()
+		if event.char == "s":
+			x, y = self.display_monk.logic_monk.move_down()
+		if event.char == "d":
+			x, y = self.display_monk.logic_monk.move_right()
+		self.display_monk.move(x, y)
+		if self.display_monk.logic_monk.is_in_field():
+			self.tiles[self.display_monk.logic_monk.y][self.display_monk.logic_monk.x].update_color()
 
 	def run(self):
 		self.root.mainloop()
@@ -105,6 +104,7 @@ class Tile:
 	def update_color(self):
 		self.color = "#cb9ca1"
 		self.canvas.itemconfig(self.background, fill=self.color)
+		self.canvas.itemconfig(self.text, text="1")
 
 	def draw(self, canvas, tile_size, gallery: Gallery):
 		canvas_x = int(self.x * tile_size)
