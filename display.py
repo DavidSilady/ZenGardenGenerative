@@ -33,7 +33,6 @@ class Display:
 		self.tiles = None
 		self.gallery = Gallery()
 		self.draw_farm(farm)
-		self.draw_monk()
 
 	def run(self):
 		self.root.mainloop()
@@ -44,10 +43,6 @@ class Display:
 			for x in range(farm.width):
 				tile = Tile(farm.field[y][x], self.tile_size, x + 1, y + 1, self.canvas, self.gallery)
 				self.tiles[y][x] = tile
-
-	def draw_monk(self):
-		img = self.gallery.get_img("other_monk" + str(self.tile_size))
-		self.canvas.create_image(self.tile_size / 2 + self.tile_size, self.tile_size / 2, image=img)
 
 
 class Tile:

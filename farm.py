@@ -2,7 +2,7 @@ import random
 
 
 class Farm:
-	def __init__(self, width, height, num_obstacles, field=None):
+	def __init__(self, width, height, num_obstacles=0, field=None):
 		self.width = width
 		self.height = height
 		self.field = field
