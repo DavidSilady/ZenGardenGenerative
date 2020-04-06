@@ -4,12 +4,13 @@ from farm import Farm
 class Monk:
 	def __init__(self, farm: Farm):
 		self.farm = farm
+		self.num_enters = 1
 		self.x = -1
 		self.y = -1
 
 	def step_on_tile(self, x, y):
 		if self.is_in_field():
-			self.farm.field[y][x] = 1
+			self.farm.field[y][x] = self.num_enters
 
 	def is_in_field(self):
 		if 0 <= self.x < self.farm.width:
@@ -37,6 +38,8 @@ class Monk:
 			print("Out of field.")
 			if new_y < -1:
 				return 0, 0
+			if self.is_in_field():
+				self.num_enters += 1
 			self.y = new_y
 			return 0, -1
 		if not self.is_clear_way(new_x, new_y):
@@ -52,6 +55,8 @@ class Monk:
 			print("Out of field.")
 			if new_y >= self.farm.height + 1:
 				return 0, 0
+			if self.is_in_field():
+				self.num_enters += 1
 			self.y = new_y
 			return 0, 1
 		if not self.is_clear_way(new_x, new_y):
@@ -67,6 +72,8 @@ class Monk:
 			print("Out of field.")
 			if new_x >= self.farm.width + 1:
 				return 0, 0
+			if self.is_in_field():
+				self.num_enters += 1
 			self.x = new_x
 			return 1, 0
 		if not self.is_clear_way(new_x, new_y):
@@ -82,6 +89,8 @@ class Monk:
 			print("Out of field.")
 			if new_x < -1:
 				return 0, 0
+			if self.is_in_field():
+				self.num_enters += 1
 			self.x = new_x
 			return -1, 0
 		if not self.is_clear_way(new_x, new_y):

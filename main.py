@@ -16,8 +16,9 @@ def read_map(filename):
 
 
 if __name__ == '__main__':
-    field, width, height = read_map("field_maps")
+    field, width, height = read_map("map")
     farm = Farm(width, height, field=field)
+   # farm = Farm(10, 5, 8)
     farm.print_field()
     monk = Monk(farm)
 

@@ -27,12 +27,13 @@ class MonkDisplay:
 
 class Gallery:
 	def __init__(self, filenames=None):
-		filenames = ["rock", "monk", "other_monk", "sd"]
+		filenames = ["rock", "monk", "other_monk", "dirt"]
 		self.image_tuples = []
 		for filename in filenames:
 			try:
 				self.image_tuples.append((filename + "75", tk.PhotoImage(file=("gallery/" + filename + "75" + ".png"))))
-				self.image_tuples.append((filename + "150", tk.PhotoImage(file=("gallery/" + filename + "150" + ".png"))))
+				self.image_tuples.append(
+					(filename + "150", tk.PhotoImage(file=("gallery/" + filename + "150" + ".png"))))
 			except tk.TclError:
 				print("File " + filename + " not found.")
 
@@ -48,6 +49,7 @@ class Display:
 		width = (farm.width + 2) * tile_size
 		height = (farm.height + 2) * tile_size
 		root_dimensions = str(width) + "x" + str(height)
+		self.farm = farm
 		self.root = tk.Tk()
 		self.root.geometry(root_dimensions)
 		self.canvas = tk.Canvas(self.root, width=width, height=height, bd=0, highlightthickness=0, relief='ridge')
@@ -56,9 +58,13 @@ class Display:
 		self.gallery = Gallery()
 		self.tiles = self.draw_farm(farm)
 		self.display_monk = MonkDisplay(self.canvas, self.root, self.gallery, self.tile_size, monk)
+		self.move_enabled = True
 		self.root.bind("<Key>", self.on_keypress)
 
 	def on_keypress(self, event):
+		if not self.move_enabled:
+			return
+		self.move_enabled = False
 		x = 0
 		y = 0
 		print(event.char)
@@ -71,8 +77,11 @@ class Display:
 		if event.char == "d":
 			x, y = self.display_monk.logic_monk.move_right()
 		self.display_monk.move(x, y)
+		self.move_enabled = True
 		if self.display_monk.logic_monk.is_in_field():
-			self.tiles[self.display_monk.logic_monk.y][self.display_monk.logic_monk.x].update_color()
+			x = self.display_monk.logic_monk.x
+			y = self.display_monk.logic_monk.y
+			self.tiles[y][x].update_color(self.farm.field[y][x], self.gallery, self.tile_size)
 
 	def run(self):
 		self.root.mainloop()
@@ -90,7 +99,7 @@ class Tile:
 	def __init__(self, value, tile_size, x, y, canvas=None, gallery=None):
 		self.color = "#ffcdd2"
 		# if value == -1:
-		# self.color = "#757575"
+		# 	self.color = "#ffcdd2"
 		self.value = value
 		self.x = x
 		self.y = y
@@ -101,10 +110,11 @@ class Tile:
 		if canvas is not None:
 			self.draw(canvas, tile_size, gallery)
 
-	def update_color(self):
-		self.color = "#cb9ca1"
+	def update_color(self, number, gallery, tile_size):
+		# self.color = "#cb9ca1"
 		self.canvas.itemconfig(self.background, fill=self.color)
-		self.canvas.itemconfig(self.text, text="1")
+		self.canvas.itemconfig(self.text, text=int(number))
+		self.canvas.delete(self.picture)
 
 	def draw(self, canvas, tile_size, gallery: Gallery):
 		canvas_x = int(self.x * tile_size)
@@ -116,6 +126,12 @@ class Tile:
 		center_y = canvas_y + (tile_size / 2)
 
 		self.text = canvas.create_text(center_x, center_y, text=str(self.value), fill="white", font=str(tile_size * 2))
+
 		if self.value == -1:
 			img = gallery.get_img("rock" + str(tile_size))
 			self.picture = canvas.create_image(center_x, center_y, image=img)
+		else:
+			img = gallery.get_img("dirt" + str(tile_size))
+			self.picture = canvas.create_image(center_x, center_y, image=img)
+
+
