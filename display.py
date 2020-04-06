@@ -4,11 +4,14 @@ import tkinter as tk
 
 class Gallery:
 	def __init__(self, filenames=None):
-		filenames = ["rock", "monk", "other_monk"]
+		filenames = ["rock", "monk", "other_monk", "sd"]
 		self.image_tuples = []
 		for filename in filenames:
-			self.image_tuples.append((filename + "75", tk.PhotoImage(file=("gallery/" + filename + "75" + ".png"))))
-			self.image_tuples.append((filename + "150", tk.PhotoImage(file=("gallery/" + filename + "150" + ".png"))))
+			try:
+				self.image_tuples.append((filename + "75", tk.PhotoImage(file=("gallery/" + filename + "75" + ".png"))))
+				self.image_tuples.append((filename + "150", tk.PhotoImage(file=("gallery/" + filename + "150" + ".png"))))
+			except tk.TclError:
+				print("File " + filename + " not found.")
 
 	def get_img(self, img_name):
 		for image_tuple in self.image_tuples:
