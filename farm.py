@@ -36,3 +36,11 @@ class Farm:
 				else:
 					output += str(self.field[y][x]) + " "
 			print(output)
+
+	def count_fitness(self):
+		fitness = 0
+		for y in range(self.height):
+			for x in range(self.width):
+				if not self.field[y][x] == 0:
+					fitness += 1
+		return fitness

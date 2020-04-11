@@ -1,3 +1,5 @@
+import random
+
 from display import Display
 from farm import Farm
 from monk import Monk, Instruction
@@ -21,11 +23,17 @@ if __name__ == '__main__':
     # farm = Farm(5, 3, 4)
     farm.print_field()
     monk = Monk(farm)
-    monk.enter_field(Instruction(8, ["right", "left"]))
-    monk.enter_field(Instruction(5, ["right", "left"]))
+    indexes = range(2 * (width + height))
+    indexes = [int(i) for i in indexes]
+    random.shuffle(indexes)
+    for index in indexes:
+        if monk.enter_field(Instruction(index, ["right", "left"])) == -1:
+            break
     farm.print_field()
-    # display = Display(farm, 75, monk)
-    # display.run()
+    print(monk.x, monk.y)
+    print(farm.count_fitness())
+    display = Display(farm, 75, monk)
+    display.run()
 
 
 
