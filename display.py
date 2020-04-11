@@ -18,7 +18,7 @@ class MonkDisplay:
 
 	def move(self, x_offset, y_offset, speed=200):
 		print(self.logic_monk.x, self.logic_monk.y)
-		speed = 0.01 / speed
+		speed = 0.005 / speed
 		for offset in range(0, self.tile_size):
 			time.sleep(speed)
 			self.canvas.move(self.image, x_offset, y_offset)
