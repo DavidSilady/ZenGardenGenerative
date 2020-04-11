@@ -31,5 +31,8 @@ class Farm:
 		for y in range(self.height):
 			output = ""
 			for x in range(self.width):
-				output += str(self.field[y][x]) + " "
+				if self.field[y][x] == -1:
+					output += "k "
+				else:
+					output += str(self.field[y][x]) + " "
 			print(output)

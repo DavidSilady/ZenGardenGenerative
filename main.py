@@ -1,6 +1,6 @@
 from display import Display
 from farm import Farm
-from monk import Monk
+from monk import Monk, Instruction
 
 
 def read_map(filename):
@@ -18,12 +18,14 @@ def read_map(filename):
 if __name__ == '__main__':
     field, width, height = read_map("map")
     farm = Farm(width, height, field=field)
-   # farm = Farm(10, 5, 8)
+    # farm = Farm(5, 3, 4)
     farm.print_field()
     monk = Monk(farm)
-
-    display = Display(farm, 75, monk)
-    display.run()
+    monk.enter_field(Instruction(8, ["right", "left"]))
+    monk.enter_field(Instruction(5, ["right", "left"]))
+    farm.print_field()
+    # display = Display(farm, 75, monk)
+    # display.run()
 
 
 

@@ -1,4 +1,31 @@
+from typing import List
 from farm import Farm
+
+
+class Instruction:
+	def __init__(self, starting_point, strategies, strategy_index=-1):
+		self.starting_point = starting_point
+		self.strategies = strategies  # right/left
+		self.strategy_index = strategy_index
+
+	def get_starting_coordinates(self, farm):
+		start_index = 0
+		start_index += self.starting_point
+		if start_index < farm.width:  # Top row
+			return start_index, 0, "top"
+		start_index -= farm.width
+		if start_index < farm.height:  # Right column
+			return farm.width, start_index, "right"
+		start_index -= farm.height
+		if start_index < farm.height:  # Left column
+			return 0, start_index, "left"
+		if start_index < farm.width:  # Bottom row
+			return start_index, farm.height, "bottom"
+		return -1, -1, "none"
+
+	def get_next_strategy(self):
+		self.strategy_index += 1
+		return self.strategies[self.strategy_index % len(self.strategies)]
 
 
 class Monk:
@@ -8,9 +35,9 @@ class Monk:
 		self.x = -1
 		self.y = -1
 
-	def step_on_tile(self, x, y):
+	def step_on_tile(self):
 		if self.is_in_field():
-			self.farm.field[y][x] = self.num_enters
+			self.farm.field[self.y][self.x] = self.num_enters
 
 	def is_in_field(self):
 		if 0 <= self.x < self.farm.width:
@@ -20,7 +47,7 @@ class Monk:
 
 	def is_clear_way(self, new_x, new_y):
 		"""
-		:return: bool if the step is clear (doesn't contain an obstacle)
+		:return: bool if the next step is clear (doesn't contain an obstacle)
 		"""
 		if new_x < 0 or new_x >= self.farm.width:
 			return True
@@ -45,7 +72,7 @@ class Monk:
 		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.y = new_y
-		self.step_on_tile(new_x, new_y)
+		self.step_on_tile()
 		return 0, -1
 
 	def move_down(self):
@@ -62,7 +89,7 @@ class Monk:
 		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.y = new_y
-		self.step_on_tile(new_x, new_y)
+		self.step_on_tile()
 		return 0, 1
 
 	def move_right(self):
@@ -79,7 +106,7 @@ class Monk:
 		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.x = new_x
-		self.step_on_tile(new_x, new_y)
+		self.step_on_tile()
 		return 1, 0
 
 	def move_left(self):
@@ -96,8 +123,62 @@ class Monk:
 		if not self.is_clear_way(new_x, new_y):
 			return 0, 0
 		self.x = new_x
-		self.step_on_tile(new_x, new_y)
+		self.step_on_tile()
 		return -1, 0
+
+	def vertical_sweep(self, y_offset, instruction: Instruction):
+		if not self.is_clear_way(self.x, self.y + y_offset):
+			if not self.is_in_field():
+				print("Cant't enter. . .")
+				return
+			if instruction.get_next_strategy() == "right":
+				return self.horizontal_sweep(x_offset=-y_offset, instruction=instruction)
+			else:
+				return self.horizontal_sweep(x_offset=y_offset, instruction=instruction)
+		if not self.is_in_field():
+			print("Enter finished.")
+			self.num_enters += 1
+			return
+		self.step_on_tile()
+		self.y += y_offset
+		self.vertical_sweep(y_offset, instruction)
+
+	def horizontal_sweep(self, x_offset, instruction: Instruction):
+		if not self.is_clear_way(self.x + x_offset, self.y):
+			if not self.is_in_field():
+				print("Cant't enter. . .")
+				return
+			if instruction.get_next_strategy() == "right":
+				return self.vertical_sweep(y_offset=x_offset, instruction=instruction)
+			else:
+				return self.vertical_sweep(y_offset=-x_offset, instruction=instruction)
+		if not self.is_in_field():
+			print("Enter finished.")
+			self.num_enters += 1
+			return
+		self.step_on_tile()
+		self.x += x_offset
+		self.horizontal_sweep(x_offset, instruction)
+
+	def enter_field(self, instruction: Instruction):
+		x, y, from_side = instruction.get_starting_coordinates(self.farm)
+		self.x = x
+		self.y = y
+		if from_side == "top":
+			self.vertical_sweep(1, instruction)
+		if from_side == "bottom":
+			self.vertical_sweep(-1, instruction)
+		if from_side == "right":
+			self.horizontal_sweep(-1, instruction)
+		if from_side == "left":
+			self.horizontal_sweep(1, instruction)
+
+	def paint_map(self, instructions: List[Instruction]):
+		for instruction in instructions:
+			self.enter_field(instruction)
+
+
+
 
 
 
