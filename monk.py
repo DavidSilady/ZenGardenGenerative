@@ -23,6 +23,10 @@ class Instruction:
 			return start_index, farm.height - 1, "bottom"
 		return -1, -1, "none"
 
+	def print_instruction(self, farm):
+		print(self.get_starting_coordinates(farm))
+		print(self.strategies)
+
 	def get_next_strategy(self):
 		self.strategy_index += 1
 		return self.strategies[self.strategy_index % len(self.strategies)]

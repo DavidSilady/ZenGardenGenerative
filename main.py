@@ -20,15 +20,9 @@ def read_map(filename):
 if __name__ == '__main__':
     field, width, height = read_map("map")
     farm = Farm(width, height, field=field)
-    # farm = Farm(5, 3, 4)
+    # farm = Farm(10, 5, 8)
     farm.print_field()
     monk = Monk(farm)
-    indexes = range(2 * (width + height))
-    indexes = [int(i) for i in indexes]
-    random.shuffle(indexes)
-    for index in indexes:
-        if monk.enter_field(Instruction(index, ["right", "left"])) == -1:
-            break
     farm.print_field()
     print(monk.x, monk.y)
     print(farm.count_fitness())
