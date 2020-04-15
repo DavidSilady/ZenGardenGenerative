@@ -59,14 +59,14 @@ class Monk:
 			return True
 		if self.farm.field[new_y][new_x] == 0:
 			return True
-		print("Obstacle in the way!", new_x, new_y)
+		# print("Obstacle in the way!", new_x, new_y)
 		return False
 
 	def move_up(self):
 		new_x = self.x
 		new_y = self.y - 1
 		if new_y < 0:
-			print("Out of field.")
+			# print("Out of field.")
 			if new_y < -1:
 				return 0, 0
 			if self.is_in_field():
@@ -83,7 +83,7 @@ class Monk:
 		new_x = self.x
 		new_y = self.y + 1
 		if new_y >= self.farm.height:
-			print("Out of field.")
+			# print("Out of field.")
 			if new_y >= self.farm.height + 1:
 				return 0, 0
 			if self.is_in_field():
@@ -100,7 +100,7 @@ class Monk:
 		new_x = self.x + 1
 		new_y = self.y
 		if new_x >= self.farm.width:
-			print("Out of field.")
+			# print("Out of field.")
 			if new_x >= self.farm.width + 1:
 				return 0, 0
 			if self.is_in_field():
@@ -117,7 +117,7 @@ class Monk:
 		new_x = self.x - 1
 		new_y = self.y
 		if new_x < 0:
-			print("Out of field.")
+			# print("Out of field.")
 			if new_x < -1:
 				return 0, 0
 			if self.is_in_field():
@@ -136,7 +136,7 @@ class Monk:
 			return -1
 		if not self.is_clear_way(self.x, self.y + y_offset):
 			if not self.is_in_field():
-				print("Cant't enter. . .")
+				# print("Cant't enter. . .")
 				return 1
 			if instruction.get_next_strategy() == "right":
 				if self.is_clear_way(self.x - y_offset, self.y):
@@ -150,7 +150,7 @@ class Monk:
 					return self.horizontal_sweep(x_offset=-y_offset, instruction=instruction)
 		self.y += y_offset
 		if not self.is_in_field():
-			print("Enter finished.")
+			# print("Enter finished.")
 			self.num_enters += 1
 			return 1
 		self.step_on_tile()
@@ -162,7 +162,7 @@ class Monk:
 			return -1
 		if not self.is_clear_way(self.x + x_offset, self.y):
 			if not self.is_in_field():
-				print("Cant't enter. . .")
+				# print("Cant't enter. . .")
 				return 1
 			if instruction.get_next_strategy() == "right":
 				if self.is_clear_way(self.x, self.y + x_offset):
@@ -176,7 +176,7 @@ class Monk:
 					return self.vertical_sweep(y_offset=x_offset, instruction=instruction)
 		self.x += x_offset
 		if not self.is_in_field():
-			print("Enter finished.")
+			# print("Enter finished.")
 			self.num_enters += 1
 			return 1
 		self.step_on_tile()
@@ -201,7 +201,8 @@ class Monk:
 
 	def paint_map(self, instructions: List[Instruction]):
 		for instruction in instructions:
-			self.enter_field(instruction)
+			if self.enter_field(instruction) == -1:
+				break
 
 	def is_stuck(self, x_offset, y_offset):
 		if self.is_clear_way(self.x + x_offset, self.y + y_offset):

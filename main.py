@@ -2,6 +2,7 @@ import random
 
 from display import Display
 from farm import Farm
+from frick_chamber import Subject
 from monk import Monk, Instruction
 
 
@@ -18,16 +19,27 @@ def read_map(filename):
 
 
 if __name__ == '__main__':
-    field, width, height = read_map("map")
-    farm = Farm(width, height, field=field)
-    # farm = Farm(10, 5, 8)
+    # field, width, height = read_map("map")
+    # farm = Farm(width, height, field=field)
+    farm = Farm(20, 20, 20)
     farm.print_field()
     monk = Monk(farm)
-    farm.print_field()
-    print(monk.x, monk.y)
-    print(farm.count_fitness())
-    display = Display(farm, 75, monk)
-    display.run()
+    mother = Subject(farm)
+    father = Subject(farm)
+    kid = Subject(farm, mother, father)
+    child = Subject(farm, father, mother)
+    mother.print_instructions()
+    print("end")
+    father.print_instructions()
+    print("end")
+    kid.print_instructions()
+    print(mother.calculate_fitness())
+    print(father.calculate_fitness())
+    print(kid.calculate_fitness())
+    print(child.calculate_fitness())
+    # print(farm.count_fitness())
+    # display = Display(farm, 75, monk)
+    # display.run()
 
 
 

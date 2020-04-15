@@ -9,6 +9,12 @@ class Farm:
 		if field is None:
 			self.field = self.generate_field(num_obstacles)
 
+	def clear(self):
+		for y in range(self.height):
+			for x in range(self.width):
+				if self.field[y][x] > 0:
+					self.field[y][x] = 0
+
 	def generate_field(self, num_obstacles):
 		# -1 = not accessible / rock / obstacle
 		# 0 = not visited
