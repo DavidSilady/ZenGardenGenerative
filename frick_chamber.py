@@ -47,8 +47,8 @@ class Subject:
 
 	def calculate_fitness(self):
 		self.monk.farm.clear()
-		self.monk.paint_map(self.instructions)
-		self.fitness = self.monk.farm.count_fitness()
+		penalty = self.monk.paint_map(self.instructions)
+		self.fitness = self.monk.farm.count_fitness() + penalty
 		return self.fitness
 
 

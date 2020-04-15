@@ -202,7 +202,8 @@ class Monk:
 	def paint_map(self, instructions: List[Instruction]):
 		for instruction in instructions:
 			if self.enter_field(instruction) == -1:
-				break
+				return -10
+		return 0
 
 	def is_stuck(self, x_offset, y_offset):
 		if self.is_clear_way(self.x + x_offset, self.y + y_offset):
