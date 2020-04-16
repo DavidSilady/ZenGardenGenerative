@@ -80,7 +80,7 @@ class Generation:
 			self.subjects = generate_new_subjects(farm)
 		else:
 			self.new_subjects(prev_generation)
-		# self.mutate()
+		self.mutate()
 		self.calculate_average_fitness()
 
 	def new_subjects(self, prev_generation):
