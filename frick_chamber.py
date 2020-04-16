@@ -53,10 +53,56 @@ class Subject:
 
 
 def frick(mother: Subject, father: Subject):
-	combination_length = floor(len(mother.instructions)/4)
+	combination_length = floor(len(mother.instructions) / 4)
 	instructions: List[Instruction] = mother.instructions[:combination_length]
-	instructions += father.instructions[combination_length:combination_length*2]
-	instructions += mother.instructions[combination_length*2:combination_length*3]
-	instructions += father.instructions[combination_length*3:]
+	instructions += father.instructions[combination_length:combination_length * 2]
+	instructions += mother.instructions[combination_length * 2:combination_length * 3]
+	instructions += father.instructions[combination_length * 3:]
 	return instructions
 
+
+class Generation:
+	def __init__(self, farm, prev_generation=None):
+		self.subjects: List[Subject] = []
+		self.average_fitness = 0
+		self.farm = farm
+		if prev_generation is None:
+			self.subjects = generate_new_subjects(farm)
+		else:
+			self.new_subjects(prev_generation)
+		self.calculate_average_fitness()
+
+	def new_subjects(self, prev_generation):
+		preserved_subjects: List[Subject] = tournament(prev_generation)
+		self.subjects = preserved_subjects + self.generation_crossover(preserved_subjects)
+		self.subjects += generate_new_subjects(self.farm, len(prev_generation) - len(self.subjects))
+
+	def generation_crossover(self, parents):
+		children: List[Subject] = []
+		for mother in parents:
+			for father in parents:
+				if not father == mother:
+					children.append(Subject(self.farm, mother, father))
+		return children
+
+	def calculate_average_fitness(self):
+		total = 0
+		for subject in self.subjects:
+			total += subject.calculate_fitness()
+		self.average_fitness = total / len(self.subjects)
+		return self.average_fitness
+
+
+def tournament(generation: Generation, num_to_preserve=7):
+	random.shuffle(generation.subjects)
+	preserved_subjects = generation.subjects[:num_to_preserve * 2]
+	return sorted(preserved_subjects,
+	              key=lambda subject:
+	              subject.fitness, reverse=True)[:num_to_preserve]
+
+
+def generate_new_subjects(farm, num_subjects=50):
+	subjects: List[Subject] = []
+	for _ in range(num_subjects):
+		subjects.append(Subject(farm))
+	return subjects
