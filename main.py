@@ -1,9 +1,12 @@
 import random
-
 from display import Display
 from farm import Farm
-from frick_chamber import Subject
+from frick_chamber import Subject, Generation
 from monk import Monk, Instruction
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 
 def read_map(filename):
@@ -21,24 +24,51 @@ def read_map(filename):
 if __name__ == '__main__':
     # field, width, height = read_map("map")
     # farm = Farm(width, height, field=field)
-    farm = Farm(20, 20, 20)
+    farm = Farm(20, 20, 10)
     farm.print_field()
     monk = Monk(farm)
-    mother = Subject(farm)
-    father = Subject(farm)
-    kid = Subject(farm, mother, father)
-    child = Subject(farm, father, mother)
-    incest = Subject(farm, child, kid)
-    milf = Subject(farm, mother, kid)
-    print("mother", mother.calculate_fitness())
-    print("fatger", father.calculate_fitness())
-    print("kid", kid.calculate_fitness())
-    print("mchildr", child.calculate_fitness())
-    print("incestr", incest.calculate_fitness())
-    print("milf", milf.calculate_fitness())
+    generation = Generation(farm)
+    print(generation.average_fitness)
+    best_gen = generation
+    next_gen = generation
+
+    avg_function = []
+    best_function = []
+    index = 0
+    f = open("animation/fitness.txt", "w")
+    f.write("")
+    f.close()
+    f = open("animation/avg_fitness.txt", "w")
+    f.write("")
+    f.close()
+    for _ in range(15000):
+        next_gen = Generation(farm, generation)
+        # print(index, next_gen.get_best_subject().fitness, next_gen.average_fitness)
+        index += 1
+        avg_function.append(next_gen.average_fitness)
+        best_function.append(next_gen.get_best_subject().fitness)
+        if next_gen.average_fitness > best_gen.average_fitness:
+            best_gen = next_gen
+        f = open("animation/fitness.txt", "a")
+        f.write(str(index) + " " + str(next_gen.get_best_subject().fitness) + "\n")
+        f.close()
+        f = open("animation/avg_fitness.txt", "a")
+        f.write(str(index) + " " + str(next_gen.average_fitness) + "\n")
+        f.close()
+        if next_gen.get_best_subject().fitness == farm.width*farm.height:
+            break
+        generation = next_gen
+
+    best_subject = next_gen.get_best_subject()
+    next_gen.print_all_fitness()
+    print("Last best subject:", best_subject.calculate_fitness())
     # print(farm.count_fitness())
-    # display = Display(farm, 75, monk)
+    # display = Display(best_subject.monk.farm, 75, best_subject.monk)
     # display.run()
+
+
+
+
 
 
 

@@ -3,10 +3,14 @@ from farm import Farm
 
 
 class Instruction:
-	def __init__(self, starting_point, strategies, strategy_index=-1):
+	def __init__(self, starting_point, strategy, strategy_index=-1):
 		self.starting_point = starting_point
-		self.strategies = strategies  # right/left
+		self.strategy = strategy  # right/left
 		self.strategy_index = strategy_index
+
+	def reset(self, index=1):
+		self.strategy_index = index
+		return self
 
 	def get_starting_coordinates(self, farm):
 		start_index = 0
@@ -25,11 +29,11 @@ class Instruction:
 
 	def print_instruction(self, farm):
 		print(self.get_starting_coordinates(farm))
-		print(self.strategies)
+		print(self.strategy)
 
 	def get_next_strategy(self):
 		self.strategy_index += 1
-		return self.strategies[self.strategy_index % len(self.strategies)]
+		return self.strategy[self.strategy_index % len(self.strategy)]
 
 
 class Monk:
@@ -132,7 +136,7 @@ class Monk:
 
 	def vertical_sweep(self, y_offset, instruction: Instruction):
 		if self.is_stuck(0, y_offset):
-			print("Got stuck.", self.x, self.y)
+			# print("Got stuck.", self.x, self.y)
 			return -1
 		if not self.is_clear_way(self.x, self.y + y_offset):
 			if not self.is_in_field():
@@ -158,7 +162,7 @@ class Monk:
 
 	def horizontal_sweep(self, x_offset, instruction: Instruction):
 		if self.is_stuck(x_offset, 0):
-			print("Got stuck.", self.x, self.y)
+			# print("Got stuck.", self.x, self.y)
 			return -1
 		if not self.is_clear_way(self.x + x_offset, self.y):
 			if not self.is_in_field():
@@ -201,7 +205,7 @@ class Monk:
 
 	def paint_map(self, instructions: List[Instruction]):
 		for instruction in instructions:
-			if self.enter_field(instruction) == -1:
+			if self.enter_field(instruction.reset()) == -1:
 				return -10
 		return 0
 
